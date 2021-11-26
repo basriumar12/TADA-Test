@@ -3,7 +3,7 @@ package com.bas.google_book_app.domain.dto;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
-
+//
 public class BookVolumeInfoDTO {
     @SerializedName("title")
     private String mTitle;
