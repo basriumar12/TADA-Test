@@ -1,31 +1,28 @@
-package com.bas.google_book_app.ui.detail;
+package com.bas.google_book_app.ui.detail
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import com.bas.google_book_app.db.BookEntry
+import com.bas.google_book_app.repository.BookRepository
+import com.bas.google_book_app.utilsdata.AppThreadExecutors
 
-import com.bas.google_book_app.db.BookEntry;
-import com.bas.google_book_app.repository.BookRepository;
-import com.bas.google_book_app.utilsdata.AppThreadExecutors;
-
-public class DetailViewModel extends ViewModel {
-    private final BookRepository mRepository;
-    private LiveData<BookEntry> mBookEntry;
-
-
-    public DetailViewModel(BookRepository repository, String bookId) {
-        mRepository = repository;
-        mBookEntry = mRepository.getFavoriteBookById(bookId);
+class DetailViewModel(private val mRepository: BookRepository?, bookId: String?) : ViewModel() {
+    private val mBookEntry: LiveData<BookEntry?>?
+    fun getBookEntry(): LiveData<BookEntry?>? {
+        return mBookEntry
     }
 
-    public LiveData<BookEntry> getBookEntry() {
-        return mBookEntry;
+    fun addFavoriteBook(book: BookEntry?) {
+        AppThreadExecutors.Companion.getInstance()?.diskIO()
+            ?.execute(Runnable { mRepository?.addFavoriteBook(book) })
     }
 
-    public void addFavoriteBook(BookEntry book) {
-        AppThreadExecutors.getInstance().diskIO().execute(() -> mRepository.addFavoriteBook(book));
+    fun removeFavoriteBook(book: BookEntry?) {
+        AppThreadExecutors.Companion.getInstance()?.diskIO()
+            ?.execute(Runnable { mRepository?.removeFavoriteBook(book) })
     }
 
-    public void removeFavoriteBook(BookEntry book) {
-        AppThreadExecutors.getInstance().diskIO().execute(() -> mRepository.removeFavoriteBook(book));
+    init {
+        mBookEntry = mRepository?.getFavoriteBookById(bookId)
     }
 }

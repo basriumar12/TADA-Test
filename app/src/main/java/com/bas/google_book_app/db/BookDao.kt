@@ -1,27 +1,16 @@
-package com.bas.google_book_app.db;
+package com.bas.google_book_app.db
 
-import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.Query;
-
-import java.util.List;
-
-import static androidx.room.OnConflictStrategy.REPLACE;
+import androidx.lifecycle.LiveData
+import androidx.room.*
 
 @Dao
-public interface BookDao {
-
+interface BookDao {
     @Query("SELECT * FROM book")
-    LiveData<List<BookEntry>> loadAllBooks();
-
-    @Insert(onConflict = REPLACE)
-    void insertBook(BookEntry bookEntry);
-
+    open fun loadAllBooks(): LiveData<MutableList<BookEntry?>?>?
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    open fun insertBook(bookEntry: BookEntry?)
     @Delete
-    void deleteBook(BookEntry bookEntry);
-
+    open fun deleteBook(bookEntry: BookEntry?)
     @Query("SELECT * FROM book WHERE book_id = :bookId")
-    LiveData<BookEntry> loadBookById(String bookId);
+    open fun loadBookById(bookId: String?): LiveData<BookEntry?>?
 }

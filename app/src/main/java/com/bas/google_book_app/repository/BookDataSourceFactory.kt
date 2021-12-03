@@ -1,32 +1,24 @@
-package com.bas.google_book_app.repository;
+package com.bas.google_book_app.repository
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
-import androidx.paging.DataSource;
+import androidx.lifecycle.MutableLiveData
+import androidx.paging.DataSource
+import com.bas.google_book_app.domain.Book
 
-import com.bas.google_book_app.domain.Book;
-
-public class BookDataSourceFactory extends DataSource.Factory<Integer, Book> {
-
-    private MutableLiveData<BookDataSource> mPostLiveData;
-    private BookDataSource mBookDataSource;
-
-    public BookDataSourceFactory() {
-        mPostLiveData = new MutableLiveData<>();
+class BookDataSourceFactory : DataSource.Factory<Int?, Book?>() {
+    private var mPostLiveData: MutableLiveData<BookDataSource?>?
+    private var mBookDataSource: BookDataSource? = null
+    override fun create(): DataSource<Int?, Book?> {
+        mBookDataSource = BookDataSource()
+        mPostLiveData = MutableLiveData()
+        mPostLiveData?.postValue(mBookDataSource)
+        return mBookDataSource as BookDataSource
     }
 
-    @NonNull
-    @Override
-    public DataSource<Integer, Book> create() {
-        mBookDataSource = new BookDataSource();
-
-        mPostLiveData = new MutableLiveData<>();
-        mPostLiveData.postValue(mBookDataSource);
-
-        return mBookDataSource;
+    fun getPostLiveData(): MutableLiveData<BookDataSource?>? {
+        return mPostLiveData
     }
 
-    public MutableLiveData<BookDataSource> getPostLiveData() {
-        return mPostLiveData;
+    init {
+        mPostLiveData = MutableLiveData()
     }
 }

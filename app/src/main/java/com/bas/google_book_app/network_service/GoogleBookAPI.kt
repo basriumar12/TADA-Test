@@ -1,19 +1,17 @@
-package com.bas.google_book_app.network_service;
+package com.bas.google_book_app.network_service
 
-import com.bas.google_book_app.domain.dto.BookResponseDTO;
+import com.bas.google_book_app.domain.dto.BookResponseDTO
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Query
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-
-public interface GoogleBookAPI {
-
+interface GoogleBookAPI {
     @GET("volumes/")
-    Call<BookResponseDTO> getBooks(
-            @Query("key") String apiKey,
-            @Query("q") String query,
-            @Query("startIndex") int page,
-            @Query("maxResults") int maxResults,
-            @Query("projection") String projection
-    );
+    open fun getBooks(
+        @Query("key") apiKey: String?,
+        @Query("q") query: String?,
+        @Query("startIndex") page: Int,
+        @Query("maxResults") maxResults: Int,
+        @Query("projection") projection: String?
+    ): Call<BookResponseDTO?>?
 }

@@ -1,43 +1,34 @@
-package com.bas.google_book_app.ui;
+package com.bas.google_book_app.ui
 
-import android.graphics.Rect;
-import android.view.View;
+import android.graphics.Rect
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 
-import androidx.recyclerview.widget.RecyclerView;
-import org.jetbrains.annotations.NotNull;
-
-public class SpacingItemDecoration extends RecyclerView.ItemDecoration {
-
-    private int spanCount;
-    private int spacing;
-    private boolean includeEdge;
-
-    public SpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
-        this.spanCount = spanCount;
-        this.spacing = spacing;
-        this.includeEdge = includeEdge;
-    }
-
-    @Override
-    public void getItemOffsets(@NotNull Rect outRect, @NotNull View view, RecyclerView parent,
-                               @NotNull RecyclerView.State state) {
-        int position = parent.getChildAdapterPosition(view);
-        int column = position % spanCount;
-
+class SpacingItemDecoration(
+    private val spanCount: Int,
+    private val spacing: Int,
+    private val includeEdge: Boolean
+) :
+    ItemDecoration() {
+    override fun getItemOffsets(
+        outRect: Rect, view: View, parent: RecyclerView,
+        state: RecyclerView.State
+    ) {
+        val position = parent.getChildAdapterPosition(view)
+        val column = position % spanCount
         if (includeEdge) {
-            outRect.left = spacing - column * spacing / spanCount;
-            outRect.right = (column + 1) * spacing / spanCount;
-
+            outRect.left = spacing - column * spacing / spanCount
+            outRect.right = (column + 1) * spacing / spanCount
             if (position < spanCount) {
-                outRect.top = spacing;
+                outRect.top = spacing
             }
-            outRect.bottom = spacing;
+            outRect.bottom = spacing
         } else {
-            outRect.left = column * spacing / spanCount;
-            outRect.right = spacing - (column + 1) * spacing / spanCount;
-
+            outRect.left = column * spacing / spanCount
+            outRect.right = spacing - (column + 1) * spacing / spanCount
             if (position >= spanCount) {
-                outRect.top = spacing;
+                outRect.top = spacing
             }
         }
     }

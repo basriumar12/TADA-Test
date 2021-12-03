@@ -1,94 +1,74 @@
-package com.bas.google_book_app.ui.main;
+package com.bas.google_book_app.ui.main
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.RecyclerView
+import com.bas.google_book_app.R
+import com.bas.google_book_app.databinding.BookListItemBinding
+import com.bas.google_book_app.db.BookEntry
+import com.bas.google_book_app.ui.main.FavoriteBookAdapter.FavoriteViewHolder
+import com.squareup.picasso.Picasso
 
-import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.RecyclerView;
+class FavoriteBookAdapter(
+    private val mContext: Context?,
+    private val mOnClickHandler: FavoriteOnClickHandler?
+) : RecyclerView.Adapter<FavoriteViewHolder?>() {
+    private var mFavoriteBooks: MutableList<BookEntry?>? = null
 
-import com.bas.google_book_app.R;
-import com.bas.google_book_app.db.BookEntry;
-import com.bas.google_book_app.databinding.BookListItemBinding;
-import com.squareup.picasso.Picasso;
-
-import java.util.List;
-
-public class FavoriteBookAdapter extends RecyclerView.Adapter<FavoriteBookAdapter.FavoriteViewHolder> {
-
-    private Context mContext;
-    private final FavoriteOnClickHandler mOnClickHandler;
-    private List<BookEntry> mFavoriteBooks;
-
-    public interface FavoriteOnClickHandler {
-        void onFavItemClick(BookEntry favoriteBook);
+    interface FavoriteOnClickHandler {
+        open fun onFavItemClick(favoriteBook: BookEntry?)
     }
 
-    public FavoriteBookAdapter(Context context, FavoriteOnClickHandler onClickHandler) {
-        mContext = context;
-        mOnClickHandler = onClickHandler;
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
+        val layoutInflater = LayoutInflater.from(mContext)
+        val favItemBinding: BookListItemBinding = DataBindingUtil
+            .inflate(layoutInflater, R.layout.book_list_item, parent, false)
+        return FavoriteViewHolder(favItemBinding)
     }
 
-    @NonNull
-    @Override
-    public FavoriteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
-        BookListItemBinding favItemBinding = DataBindingUtil
-                .inflate(layoutInflater, R.layout.book_list_item, parent, false);
-        return new FavoriteViewHolder(favItemBinding);
+    override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
+        val bookEntry = mFavoriteBooks?.get(position)
+        holder.bind(bookEntry)
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull FavoriteViewHolder holder, int position) {
-        BookEntry bookEntry = mFavoriteBooks.get(position);
-        holder.bind(bookEntry);
+    override fun getItemCount(): Int {
+        return mFavoriteBooks?.size ?: 0
     }
 
-    @Override
-    public int getItemCount() {
-        if (mFavoriteBooks == null) return 0;
-        return mFavoriteBooks.size();
+    fun setBooks(favoriteBooks: MutableList<BookEntry?>?) {
+        mFavoriteBooks = favoriteBooks
+        notifyDataSetChanged()
     }
 
-    public void setBooks(List<BookEntry> favoriteBooks) {
-        mFavoriteBooks = favoriteBooks;
-        notifyDataSetChanged();
+    fun getFavoriteBooks(): MutableList<BookEntry?>? {
+        return mFavoriteBooks
     }
 
-    public List<BookEntry> getFavoriteBooks() {
-        return mFavoriteBooks;
-    }
-
-    public class FavoriteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        BookListItemBinding mFavItemBinding;
-
-        public FavoriteViewHolder(BookListItemBinding favItemBinding) {
-            super(favItemBinding.getRoot());
-
-            mFavItemBinding = favItemBinding;
-
-            itemView.setOnClickListener(this);
+    inner class FavoriteViewHolder(var mFavItemBinding: BookListItemBinding?) :
+        RecyclerView.ViewHolder(
+            mFavItemBinding?.getRoot()!!
+        ), View.OnClickListener {
+        fun bind(favoriteBook: BookEntry?) {
+            var thumbnail = favoriteBook?.getThumbnailURL()
+            thumbnail = thumbnail?.replaceFirst("^(http://)?(www\\.)?".toRegex(), "https://")
+            Picasso.with(itemView.context)
+                .load(thumbnail)
+                .error(R.drawable.ic_baseline_broken_image_24)
+                .into(mFavItemBinding?.ivThumbnail)
+            mFavItemBinding?.tvTitle?.text = favoriteBook?.getTitle()
         }
 
-        void bind(BookEntry favoriteBook) {
-            String thumbnail = favoriteBook.getThumbnailURL();
-            thumbnail = thumbnail.replaceFirst("^(http://)?(www\\.)?", "https://");
-            Picasso.with(itemView.getContext())
-                    .load(thumbnail)
-                    .error(R.drawable.ic_baseline_broken_image_24)
-                    .into(mFavItemBinding.ivThumbnail);
-
-            mFavItemBinding.tvTitle.setText(favoriteBook.getTitle());
+        override fun onClick(v: View?) {
+            val adapterPosition = adapterPosition
+            val favoriteBook = mFavoriteBooks?.get(adapterPosition)
+            mOnClickHandler?.onFavItemClick(favoriteBook)
         }
 
-        @Override
-        public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            BookEntry favoriteBook = mFavoriteBooks.get(adapterPosition);
-            mOnClickHandler.onFavItemClick(favoriteBook);
+        init {
+            itemView.setOnClickListener(this)
         }
     }
 }

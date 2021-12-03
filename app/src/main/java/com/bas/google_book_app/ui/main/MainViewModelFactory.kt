@@ -1,24 +1,14 @@
-package com.bas.google_book_app.ui.main;
+package com.bas.google_book_app.ui.main
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider.NewInstanceFactory
+import com.bas.google_book_app.repository.BookRepository
 
-import com.bas.google_book_app.repository.BookRepository;
-
-public class MainViewModelFactory extends ViewModelProvider.NewInstanceFactory {
-
-    private final BookRepository mRepository;
-    private final String mFilterBy;
-
-    public MainViewModelFactory(String filterBy, BookRepository repository) {
-        this.mFilterBy = filterBy;
-        this.mRepository = repository;
-    }
-
-    @Override
-    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new MainActivityViewModel(mFilterBy, mRepository);
+class MainViewModelFactory(
+    private val mFilterBy: String?,
+    private val mRepository: BookRepository?
+) : NewInstanceFactory() {
+    override fun <T : ViewModel?> create(modelClass: Class<T?>): T {
+        return MainActivityViewModel(mFilterBy, mRepository) as T
     }
 }
-

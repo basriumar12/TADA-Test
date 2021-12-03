@@ -1,57 +1,50 @@
-package com.bas.google_book_app.utilsdata;
+package com.bas.google_book_app.utilsdata
 
-import android.os.Handler;
-import android.os.Looper;
+import android.os.Handler
+import android.os.Looper
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
-import androidx.annotation.NonNull;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
-import static com.bas.google_book_app.utilsdata.Constants.NUMBER_OF_THREADS_THREE;
-
-public class AppThreadExecutors {
-    private static final Object LOCK = new Object();
-    private static AppThreadExecutors sInstance;
-    private final Executor diskIO;
-    private final Executor mainThread;
-    private final Executor networkIO;
-
-    private AppThreadExecutors(Executor diskIO, Executor networkIO, Executor mainThread) {
-        this.diskIO = diskIO;
-        this.networkIO = networkIO;
-        this.mainThread = mainThread;
+class AppThreadExecutors private constructor(
+    private val diskIO: Executor?,
+    private val networkIO: Executor?,
+    private val mainThread: Executor?
+) {
+    fun diskIO(): Executor? {
+        return diskIO
     }
 
-    public static AppThreadExecutors getInstance() {
-        if (sInstance == null) {
-            synchronized (LOCK) {
-                sInstance = new AppThreadExecutors(Executors.newSingleThreadExecutor(),
-                        Executors.newFixedThreadPool(NUMBER_OF_THREADS_THREE),
-                        new MainThreadExecutor());
-            }
+    fun mainThread(): Executor? {
+        return mainThread
+    }
+
+    fun networkIO(): Executor? {
+        return networkIO
+    }
+
+    private class MainThreadExecutor : Executor {
+        private val mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
+        override fun execute(command: Runnable) {
+            mainThreadHandler?.post(command)
         }
-        return sInstance;
     }
 
-    public Executor diskIO() {
-        return diskIO;
-    }
-
-    public Executor mainThread() {
-        return mainThread;
-    }
-
-    public Executor networkIO() {
-        return networkIO;
-    }
-
-    private static class MainThreadExecutor implements Executor {
-        private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
-
-        @Override
-        public void execute(@NonNull Runnable command) {
-            mainThreadHandler.post(command);
+    companion object {
+        private val LOCK: Any? = Any()
+        private var sInstance: AppThreadExecutors? = null
+        fun getInstance(): AppThreadExecutors? {
+            if (sInstance == null) {
+                if (LOCK != null) {
+                    synchronized(LOCK) {
+                        sInstance = AppThreadExecutors(
+                            Executors.newSingleThreadExecutor(),
+                            Executors.newFixedThreadPool(Constants.NUMBER_OF_THREADS_THREE),
+                            MainThreadExecutor()
+                        )
+                    }
+                }
+            }
+            return sInstance
         }
     }
 }

@@ -1,36 +1,23 @@
-package com.bas.google_book_app.domain.dto;
+package com.bas.google_book_app.domain.dto
 
-import androidx.annotation.Nullable;
+import com.google.gson.annotations.SerializedName
 
-import com.google.gson.annotations.SerializedName;
-
-public class BookDTO {
-    @SerializedName("id")
-    private String mId;
-
-    @SerializedName("volumeInfo")
-    private BookVolumeInfoDTO mVolumeInfo;
-
-    @SerializedName("saleInfo")
-    @Nullable
-    private BookSaleInfoDTO mSaleInfo;
-
-    public BookDTO(String bookId, BookVolumeInfoDTO volumeInfo, @Nullable BookSaleInfoDTO saleInfo) {
-        mId = bookId;
-        mVolumeInfo = volumeInfo;
-        mSaleInfo = saleInfo;
+class BookDTO(
+    @field:SerializedName("id") private val mId: String?,
+    @field:SerializedName(
+        "volumeInfo"
+    ) private val mVolumeInfo: BookVolumeInfoDTO?,
+    @field:SerializedName("saleInfo") private val mSaleInfo: BookSaleInfoDTO?
+) {
+    fun getId(): String? {
+        return mId
     }
 
-    public String getId() {
-        return mId;
+    fun getVolumeInfo(): BookVolumeInfoDTO? {
+        return mVolumeInfo
     }
 
-    public BookVolumeInfoDTO getVolumeInfo() {
-        return mVolumeInfo;
-    }
-
-    @Nullable
-    public BookSaleInfoDTO getSaleInfo() {
-        return mSaleInfo;
+    fun getSaleInfo(): BookSaleInfoDTO? {
+        return mSaleInfo
     }
 }

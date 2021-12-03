@@ -1,32 +1,23 @@
-package com.bas.google_book_app.ui;
+package com.bas.google_book_app.ui
 
-import android.content.Context;
-import android.util.AttributeSet;
+import android.content.Context
+import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatImageView
+import com.bas.google_book_app.utilsdata.Constants
 
-import androidx.appcompat.widget.AppCompatImageView;
-
-import static com.bas.google_book_app.utilsdata.Constants.THREE;
-import static com.bas.google_book_app.utilsdata.Constants.TWO;
-
-public class TwoByThreeRatioImageView extends AppCompatImageView {
-
-    public TwoByThreeRatioImageView(Context context) {
-        super(context);
+class TwoByThreeRatioImageView : AppCompatImageView {
+    constructor(context: Context?) : super(context!!) {}
+    constructor(context: Context?, attrs: AttributeSet?) : super(context!!, attrs) {}
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context!!,
+        attrs,
+        defStyleAttr
+    ) {
     }
 
-    public TwoByThreeRatioImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public TwoByThreeRatioImageView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int twoThreeHeight = MeasureSpec.getSize(widthMeasureSpec) * THREE / TWO;
-        int twoThreeHeightSpec =
-                MeasureSpec.makeMeasureSpec(twoThreeHeight, MeasureSpec.EXACTLY);
-        super.onMeasure(widthMeasureSpec, twoThreeHeightSpec);
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val twoThreeHeight = MeasureSpec.getSize(widthMeasureSpec) * Constants.THREE / Constants.TWO
+        val twoThreeHeightSpec = MeasureSpec.makeMeasureSpec(twoThreeHeight, MeasureSpec.EXACTLY)
+        super.onMeasure(widthMeasureSpec, twoThreeHeightSpec)
     }
 }

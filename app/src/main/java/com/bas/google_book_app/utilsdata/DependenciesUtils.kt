@@ -1,26 +1,25 @@
-package com.bas.google_book_app.utilsdata;
+package com.bas.google_book_app.utilsdata
 
-import android.content.Context;
+import android.content.Context
+import com.bas.google_book_app.db.BookDatabase
+import com.bas.google_book_app.repository.BookRepository
+import com.bas.google_book_app.ui.detail.DetailViewModelFactory
+import com.bas.google_book_app.ui.main.MainViewModelFactory
 
-import com.bas.google_book_app.db.BookDatabase;
-import com.bas.google_book_app.repository.BookRepository;
-import com.bas.google_book_app.ui.detail.DetailViewModelFactory;
-import com.bas.google_book_app.ui.main.MainViewModelFactory;
-
-public class DependenciesUtils {
-
-    public static MainViewModelFactory provideMainViewModelFactory(Context context, String filterBy) {
-        BookRepository repository = getRepository(context.getApplicationContext());
-        return new MainViewModelFactory(filterBy, repository);
+object DependenciesUtils {
+    fun provideMainViewModelFactory(context: Context, filterBy: String?): MainViewModelFactory? {
+        val repository = getRepository(context.applicationContext)
+        return MainViewModelFactory(filterBy, repository)
     }
 
-    public static DetailViewModelFactory provideDetailViewModelFactory(Context context, String bookId) {
-        BookRepository repository = getRepository(context.getApplicationContext());
-        return new DetailViewModelFactory(repository, bookId);
+    fun provideDetailViewModelFactory(context: Context, bookId: String?): DetailViewModelFactory? {
+        val repository = getRepository(context.applicationContext)
+        return DetailViewModelFactory(repository, bookId)
     }
 
-    public static BookRepository getRepository(Context context) {
-        BookDatabase database = BookDatabase.getInstance(context.getApplicationContext());
-        return BookRepository.getInstance(database.bookDao());
+    fun getRepository(context: Context): BookRepository? {
+
+        val database: BookDatabase? = BookDatabase.getInstance(context.applicationContext)
+        return BookRepository.getInstance(database?.bookDao())
     }
 }

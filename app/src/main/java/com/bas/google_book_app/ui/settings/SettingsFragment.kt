@@ -1,67 +1,59 @@
-package com.bas.google_book_app.ui.settings;
+package com.bas.google_book_app.ui.settings
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.os.Bundle
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import com.bas.google_book_app.R
 
-import androidx.preference.ListPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceScreen;
-
-import com.bas.google_book_app.R;
-
-public class SettingsFragment extends PreferenceFragmentCompat implements
-        SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private static final String DEFAULT_VALUE = "";
-
-    @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-
-        addPreferencesFromResource(R.xml.pref_book);
-        SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
-
-        PreferenceScreen prefScreen = getPreferenceScreen();
-        int count = prefScreen.getPreferenceCount();
-
-        for (int i = 0; i < count; i++) {
-            Preference p = prefScreen.getPreference(i);
-
-            String value = sharedPreferences.getString(p.getKey(), DEFAULT_VALUE);
-            setPreferenceSummary(p, value);
+class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        addPreferencesFromResource(R.xml.pref_book)
+        val sharedPreferences = preferenceScreen.sharedPreferences
+        val prefScreen = preferenceScreen
+        val count = prefScreen.preferenceCount
+        for (i in 0 until count) {
+            val p = prefScreen.getPreference(i)
+            val value = sharedPreferences.getString(p.key, DEFAULT_VALUE)
+            setPreferenceSummary(p, value)
         }
     }
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Preference preference = findPreference(key);
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        val preference = key?.let { findPreference<Preference?>(it) }
         if (null != preference) {
-            String value = sharedPreferences.getString(preference.getKey(), DEFAULT_VALUE);
-            setPreferenceSummary(preference, value);
+            val value = sharedPreferences?.getString(preference.key, DEFAULT_VALUE)
+            setPreferenceSummary(preference, value)
         }
     }
 
-    private void setPreferenceSummary(Preference preference, String value) {
-        if (preference instanceof ListPreference) {
-            ListPreference listPreference = (ListPreference) preference;
-            int prefIndex = listPreference.findIndexOfValue(value);
-            if (prefIndex >= 0) {
-                listPreference.setSummary(listPreference.getEntries()[prefIndex]);
+    private fun setPreferenceSummary(preference: Preference?, value: String?) {
+        if (preference is ListPreference) {
+            val listPreference = preference as ListPreference?
+            val prefIndex = listPreference?.findIndexOfValue(value)
+            if (prefIndex != null) {
+                if (prefIndex >= 0) {
+                    listPreference?.setSummary(listPreference.getEntries()[prefIndex!!])
+                }
             }
         }
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getPreferenceScreen().getSharedPreferences()
-                .registerOnSharedPreferenceChangeListener(this);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        preferenceScreen.sharedPreferences
+            .registerOnSharedPreferenceChangeListener(this)
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        getPreferenceScreen().getSharedPreferences()
-                .unregisterOnSharedPreferenceChangeListener(this);
+    override fun onDestroy() {
+        super.onDestroy()
+        preferenceScreen.sharedPreferences
+            .unregisterOnSharedPreferenceChangeListener(this)
+    }
+
+    companion object {
+        private val DEFAULT_VALUE: String? = ""
     }
 }

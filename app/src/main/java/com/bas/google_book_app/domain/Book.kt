@@ -1,127 +1,70 @@
-package com.bas.google_book_app.domain;
+package com.bas.google_book_app.domain
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.text.TextUtils;
+import android.os.Parcel
+import android.os.Parcelable
+import android.text.TextUtils
+import java.util.*
 
-import androidx.annotation.Nullable;
+class Book() : Parcelable {
+     var mId: String? = null
+     var mTitle: String? = null
+     var mSubtitle: String? = null
+     var mAuthors: Array<String?>? = null
+     var mDescription: String? = null
+    var mBuyLink: String? = null
+    var mThumbnailURL: String? = null
 
-import java.util.Arrays;
-import java.util.Objects;
+    constructor(parcel: Parcel) : this() {
+        mId = parcel.readString()
+        mTitle = parcel.readString()
+        mSubtitle = parcel.readString()
+        mAuthors = parcel.createStringArray()
+        mDescription = parcel.readString()
+        mBuyLink = parcel.readString()
+        mThumbnailURL = parcel.readString()
+    }
 
-public class Book implements Parcelable {
+    constructor(
+        mId: String?,
+        mTitle: String?,
+        mSubtitle: String?,
+        mAuthors: Array<String?>?,
+        mDescription: String?,
+        buyLink: String?,
+        mThumbnailURL: String?
+    ) : this() {
+        this.mId = mId
+        this.mTitle = mTitle
+        this.mSubtitle = mSubtitle
+        this.mAuthors = mAuthors
+        this.mDescription = mDescription
+        mBuyLink = buyLink
+        this.mThumbnailURL = mThumbnailURL
+    }
 
-    private String mId;
-    private String mTitle;
-    private String mSubtitle;
-    private String[] mAuthors;
-    private String mDescription;
-    private String mBuyLink;
-    private String mThumbnailURL;
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(mId)
+        parcel.writeString(mTitle)
+        parcel.writeString(mSubtitle)
+        parcel.writeStringArray(mAuthors)
+        parcel.writeString(mDescription)
+        parcel.writeString(mBuyLink)
+        parcel.writeString(mThumbnailURL)
+    }
 
-    public static final Parcelable.Creator<Book> CREATOR = new Parcelable.Creator<Book>() {
+    override fun describeContents(): Int {
+        return 0
+    }
 
-        public Book createFromParcel(Parcel in) {
-            return new Book(in);
+    companion object CREATOR : Parcelable.Creator<Book> {
+        override fun createFromParcel(parcel: Parcel): Book {
+            return Book(parcel)
         }
 
-        public Book[] newArray(int size) {
-            return new Book[size];
+        override fun newArray(size: Int): Array<Book?> {
+            return arrayOfNulls(size)
         }
-    };
-
-    public Book(String mId, String mTitle, String mSubtitle, String[] mAuthors, String mDescription,
-                String buyLink, String mThumbnailURL) {
-        this.mId = mId;
-        this.mTitle = mTitle;
-        this.mSubtitle = mSubtitle;
-        this.mAuthors = mAuthors;
-        this.mDescription = mDescription;
-        this.mBuyLink = buyLink;
-        this.mThumbnailURL = mThumbnailURL;
     }
 
-    private Book(Parcel in) {
-        int authorArraySize = in.readInt();
-        mId = in.readString();
-        mTitle = in.readString();
-        mSubtitle = in.readString();
-        mAuthors = new String[authorArraySize];
-        in.readStringArray(mAuthors);
-        mDescription = in.readString();
-        mBuyLink = in.readString();
-        mThumbnailURL = in.readString();
-    }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        if (mAuthors != null) {
-            dest.writeInt(mAuthors.length);
-        } else {
-            dest.writeInt(0);
-        }
-        dest.writeString(mId);
-        dest.writeString(mTitle);
-        dest.writeString(mSubtitle);
-        dest.writeStringArray(mAuthors);
-        dest.writeString(mDescription);
-        dest.writeString(mBuyLink);
-        dest.writeString(mThumbnailURL);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public String getId() {
-        return mId;
-    }
-
-    public String getThumbnailURL() {
-        return mThumbnailURL;
-    }
-
-    public String getTitle() {
-        return mTitle;
-    }
-
-    @Nullable
-    public String getSubtitle() {
-        return mSubtitle;
-    }
-
-    @Nullable
-    public String getBuyLink() {
-        return mBuyLink;
-    }
-
-    public String getDescription() {
-        return mDescription;
-    }
-
-    public String getAuthors() {
-        return TextUtils.join("\n", mAuthors);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Book book = (Book) o;
-        return mId.equals(book.mId) &&
-                mTitle.equals(book.mTitle) &&
-                Objects.equals(mSubtitle, book.mSubtitle) &&
-                Arrays.equals(mAuthors, book.mAuthors) &&
-                mDescription.equals(book.mDescription) &&
-                Objects.equals(mBuyLink, book.mBuyLink) &&
-                Objects.equals(mThumbnailURL, book.mThumbnailURL);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(mId, mTitle, mSubtitle, mDescription, mBuyLink, mThumbnailURL);
-        result = 31 * result + Arrays.hashCode(mAuthors);
-        return result;
-    }
 }

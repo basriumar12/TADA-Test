@@ -1,68 +1,64 @@
-package com.bas.google_book_app.utilsdata;
+package com.bas.google_book_app.utilsdata
 
-import com.bas.google_book_app.BuildConfig;
+import com.bas.google_book_app.BuildConfig
 
-public final class Constants {
-
+object Constants {
     /**
      * Base URL from Google Book API
      */
-    public static final String BOOK_BASE_URL = "https://www.googleapis.com/books/v1/";
+    val BOOK_BASE_URL: String? = "https://www.googleapis.com/books/v1/"
 
     /**
      * Constants for network call
      */
-    public static final String QUERY = "android";
-    public static final String PROJECTION = "lite";
-    public static final int PAGE = 0;
-    public static final int MAX_RESULTS = 20;
-    public static final String API_KEY = BuildConfig.API_KEY;
+    val QUERY: String? = "android"
+    val PROJECTION: String? = "lite"
+    const val PAGE = 0
+    const val MAX_RESULTS = 20
+    val API_KEY: String? = BuildConfig.API_KEY
 
     /**
      * Number of threads for the pool
      */
-    public static final int NUMBER_OF_THREADS_THREE = 3;
+    const val NUMBER_OF_THREADS_THREE = 3
 
     /**
      * API Status code for invalid API key or Authentication failed
      */
-    public static final int RESPONSE_CODE_API_STATUS = 401;
+    const val RESPONSE_CODE_API_STATUS = 401
 
     /**
      * Room Database name
      */
-    public static final String DATABASE_NAME = "books";
+    val DATABASE_NAME: String? = "books"
 
     /**
      * Data Source Page control
      */
-    public static final int PREVIOUS_PAGE_KEY_ONE = 0;
-    public static final int NEXT_PAGE_KEY_TWO = 21;
-
-    public static final int REQUEST_CODE_DIALOG = 0;
-    public static final String LAYOUT_MANAGER_STATE = "layout_manager_state";
+    const val PREVIOUS_PAGE_KEY_ONE = 0
+    const val NEXT_PAGE_KEY_TWO = 21
+    const val REQUEST_CODE_DIALOG = 0
+    val LAYOUT_MANAGER_STATE: String? = "layout_manager_state"
 
     /**
      * Paged List configuration
      */
-    public static final int INITIAL_LOAD_SIZE_HINT = 10;
-    public static final int PAGE_SIZE = 20;
-    public static final int PREFETCH_DISTANCE = 50;
+    const val INITIAL_LOAD_SIZE_HINT = 10
+    const val PAGE_SIZE = 20
+    const val PREFETCH_DISTANCE = 50
 
     /**
      * Image View Ratio
      */
-    public static final int TWO = 2;
-    public static final int THREE = 3;
+    const val TWO = 2
+    const val THREE = 3
 
     /**
      * Book Grid configuration
      */
-    public static final int GRID_SPAN_COUNT = 2;
-    public static final int GRID_SPACING = 8;
-    public static final boolean GRID_INCLUDE_EDGE = true;
-
-    public static final String NO_THUMBNAIL_URL = "";
-    public static final String EXTRA_BOOK = "extra_book";
-
+    const val GRID_SPAN_COUNT = 2
+    const val GRID_SPACING = 8
+    const val GRID_INCLUDE_EDGE = true
+    val NO_THUMBNAIL_URL: String? = ""
+    val EXTRA_BOOK: String? = "extra_book"
 }

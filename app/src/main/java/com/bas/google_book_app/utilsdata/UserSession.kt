@@ -1,135 +1,127 @@
-package com.bas.google_book_app.utilsdata;
+package com.bas.google_book_app.utilsdata
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import com.bas.google_book_app.ui.login.LoginActivity
+import java.util.*
 
-import com.bas.google_book_app.ui.login.LoginActivity;
-
-import java.util.HashMap;
-
-public class UserSession {
-
-    SharedPreferences pref;
+class UserSession(  // Context
+    var _context: Context?
+) {
+    var pref: SharedPreferences?
 
     // Editor reference for Shared preferences
-    SharedPreferences.Editor editor;
-
-    // Context
-    Context _context;
+    var editor: SharedPreferences.Editor?
 
     // Shared preferences mode
-    int PRIVATE_MODE = 0;
-
-    // Shared preferences file name
-    public static final String PREFER_NAME = "Reg";
-
-    // All Shared Preferences Keys
-    public static final String IS_USER_LOGIN = "IsUserLoggedIn";
-
-    // User name (make variable public to access from outside)
-    public static final String KEY_NAME = "Name";
-
-    // Email address (make variable public to access from outside)
-    public static final String KEY_EMAIL = "Email";
-
-    // password
-    public static final String KEY_PASSWORD = "txtPassword";
-
-    // Constructor
-    public UserSession(Context context){
-        this._context = context;
-        pref = _context.getSharedPreferences(PREFER_NAME, PRIVATE_MODE);
-        editor = pref.edit();
-    }
+    var PRIVATE_MODE = 0
 
     //Create login session
-    public void createUserLoginSession(String uName, String uPassword){
+    fun createUserLoginSession(uName: String?, uPassword: String?) {
         // Storing login value as TRUE
-        editor.putBoolean(IS_USER_LOGIN, true);
+        editor?.putBoolean(IS_USER_LOGIN, true)
 
         // Storing name in preferences
-        editor.putString(KEY_NAME, uName);
+        editor?.putString(KEY_NAME, uName)
 
         // Storing email in preferences
-        editor.putString(KEY_PASSWORD,  uPassword);
+        editor?.putString(KEY_PASSWORD, uPassword)
 
         // commit changes
-        editor.commit();
+        editor?.commit()
     }
 
     /**
      * Check login method will check user login status
      * If false it will redirect user to login page
      * Else do anything
-     * */
-    public boolean checkLogin(){
+     */
+    fun checkLogin(): Boolean {
         // Check login status
-        if(!this.isUserLoggedIn()){
+        if (!isUserLoggedIn()) {
 
             // user is not logged in redirect him to Login Activity
-            Intent i = new Intent(_context, LoginActivity.class);
+            val i = Intent(_context, LoginActivity::class.java)
 
             // Closing all the Activities from stack
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
             // Add new Flag to start new Activity
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
             // Staring Login Activity
-            _context.startActivity(i);
-
-            return true;
+            _context?.startActivity(i)
+            return true
         }
-        return false;
+        return false
     }
-
-
 
     /**
      * Get stored session data
-     * */
-    public HashMap<String, String> getUserDetails(){
+     */
+    fun getUserDetails(): HashMap<String?, String?>? {
 
         //Use hashmap to store user credentials
-        HashMap<String, String> user = new HashMap<String, String>();
+        val user = HashMap<String?, String?>()
 
         // user name
-        user.put(KEY_NAME, pref.getString(KEY_NAME, null));
+        user[KEY_NAME] = pref?.getString(KEY_NAME, null)
 
         // user email id
-        user.put(KEY_PASSWORD, pref.getString(KEY_PASSWORD, null));
+        user[KEY_PASSWORD] = pref?.getString(KEY_PASSWORD, null)
 
         // return user
-        return user;
+        return user
     }
 
     /**
      * Clear session details
-     * */
-    public void logoutUser(){
+     */
+    fun logoutUser() {
 
         // Clearing all user data from Shared Preferences
-        editor.clear();
-        editor.commit();
+        editor?.clear()
+        editor?.commit()
 
         // After logout redirect user to MainActivity
-        Intent i = new Intent(_context, LoginActivity.class);
+        val i = Intent(_context, LoginActivity::class.java)
 
         // Closing all the Activities
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         // Add new Flag to start new Activity
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
         // Staring Login Activity
-        _context.startActivity(i);
+        _context?.startActivity(i)
     }
-
 
     // Check for login
-    public boolean isUserLoggedIn(){
-        return pref.getBoolean(IS_USER_LOGIN, false);
+    fun isUserLoggedIn(): Boolean {
+        return pref?.getBoolean(IS_USER_LOGIN, false) == true
     }
 
+    companion object {
+        // Shared preferences file name
+        val PREFER_NAME: String? = "Reg"
+
+        // All Shared Preferences Keys
+        val IS_USER_LOGIN: String? = "IsUserLoggedIn"
+
+        // User name (make variable public to access from outside)
+        val KEY_NAME: String? = "Name"
+
+        // Email address (make variable public to access from outside)
+        val KEY_EMAIL: String? = "Email"
+
+        // password
+        val KEY_PASSWORD: String? = "txtPassword"
+    }
+
+    // Constructor
+    init {
+        pref = _context?.getSharedPreferences(PREFER_NAME, PRIVATE_MODE)
+        editor = pref?.edit()
+    }
 }

@@ -1,128 +1,112 @@
-package com.bas.google_book_app.db;
+package com.bas.google_book_app.db
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import java.util.Objects;
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.util.*
 
 @Entity(tableName = "book")
-public class BookEntry {
+class BookEntry(
+    @field:ColumnInfo(name = "book_id") private var bookId: String?,
+    @field:ColumnInfo(name = "book_title") private var mTitle: String?,
+    @field:ColumnInfo(
+        name = "book_subtitle"
+    ) private var mSubtitle: String?,
+    @field:ColumnInfo(name = "book_authors") private var mAuthors: String?,
+    @field:ColumnInfo(name = "book_description") private var mDescription: String?,
+    @field:ColumnInfo(
+        name = "book_buy_link"
+    ) private var mBuyLink: String?,
+    @field:ColumnInfo(name = "book_thumbnail_url") private var mThumbnailURL: String?
+) {
     @PrimaryKey(autoGenerate = true)
-    private int id;
-
-    @ColumnInfo(name = "book_id")
-    private String bookId;
-
-    @ColumnInfo(name = "book_title")
-    private String mTitle;
-
-    @ColumnInfo(name = "book_subtitle")
-    private String mSubtitle;
-
-    @ColumnInfo(name = "book_authors")
-    private String mAuthors;
-
-    @ColumnInfo(name = "book_description")
-    private String mDescription;
-
-    @ColumnInfo(name = "book_buy_link")
-    private String mBuyLink;
-
-    @ColumnInfo(name = "book_thumbnail_url")
-    private String mThumbnailURL;
-
-    public BookEntry(String bookId, String mTitle, String mSubtitle, String mAuthors,
-                     String mDescription, String mBuyLink, String mThumbnailURL) {
-        this.bookId = bookId;
-        this.mTitle = mTitle;
-        this.mSubtitle = mSubtitle;
-        this.mAuthors = mAuthors;
-        this.mDescription = mDescription;
-        this.mBuyLink = mBuyLink;
-        this.mThumbnailURL = mThumbnailURL;
+    private var id = 0
+    fun getId(): Int {
+        return id
     }
 
-    public int getId() {
-        return id;
+    fun getBookId(): String? {
+        return bookId
     }
 
-    public String getBookId() {
-        return bookId;
+    fun getTitle(): String? {
+        return mTitle
     }
 
-    public String getTitle() {
-        return mTitle;
+    fun getSubtitle(): String? {
+        return mSubtitle
     }
 
-    public String getSubtitle() {
-        return mSubtitle;
+    fun getAuthors(): String? {
+        return mAuthors
     }
 
-    public String getAuthors() {
-        return mAuthors;
+    fun getDescription(): String? {
+        return mDescription
     }
 
-    public String getDescription() {
-        return mDescription;
+    fun getBuyLink(): String? {
+        return mBuyLink
     }
 
-    public String getBuyLink() {
-        return mBuyLink;
+    fun getThumbnailURL(): String? {
+        return mThumbnailURL
     }
 
-    public String getThumbnailURL() {
-        return mThumbnailURL;
+    fun setId(id: Int) {
+        this.id = id
     }
 
-    public void setId(int id) {
-        this.id = id;
+    fun setBookId(bookId: String?) {
+        this.bookId = bookId
     }
 
-    public void setBookId(String bookId) {
-        this.bookId = bookId;
+    fun setTitle(mTitle: String?) {
+        this.mTitle = mTitle
     }
 
-    public void setTitle(String mTitle) {
-        this.mTitle = mTitle;
+    fun setSubtitle(mSubtitle: String?) {
+        this.mSubtitle = mSubtitle
     }
 
-    public void setSubtitle(String mSubtitle) {
-        this.mSubtitle = mSubtitle;
+    fun setAuthors(mAuthors: String?) {
+        this.mAuthors = mAuthors
     }
 
-    public void setAuthors(String mAuthors) {
-        this.mAuthors = mAuthors;
+    fun setDescription(mDescription: String?) {
+        this.mDescription = mDescription
     }
 
-    public void setDescription(String mDescription) {
-        this.mDescription = mDescription;
+    fun setBuyLink(mBuyLink: String?) {
+        this.mBuyLink = mBuyLink
     }
 
-    public void setBuyLink(String mBuyLink) {
-        this.mBuyLink = mBuyLink;
+    fun setThumbnailURL(mThumbnailURL: String?) {
+        this.mThumbnailURL = mThumbnailURL
     }
 
-    public void setThumbnailURL(String mThumbnailURL) {
-        this.mThumbnailURL = mThumbnailURL;
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o == null || javaClass != o.javaClass) return false
+        val bookEntry = o as BookEntry?
+        return bookId == bookEntry?.bookId &&
+                mTitle == bookEntry?.mTitle &&
+                mSubtitle == bookEntry?.mSubtitle &&
+                mAuthors == bookEntry?.mAuthors &&
+                mDescription == bookEntry?.mDescription &&
+                mBuyLink == bookEntry?.mBuyLink &&
+                mThumbnailURL == bookEntry?.mThumbnailURL
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BookEntry bookEntry = (BookEntry) o;
-        return Objects.equals(bookId, bookEntry.bookId) &&
-                Objects.equals(mTitle, bookEntry.mTitle) &&
-                Objects.equals(mSubtitle, bookEntry.mSubtitle) &&
-                Objects.equals(mAuthors, bookEntry.mAuthors) &&
-                Objects.equals(mDescription, bookEntry.mDescription) &&
-                Objects.equals(mBuyLink, bookEntry.mBuyLink) &&
-                Objects.equals(mThumbnailURL, bookEntry.mThumbnailURL);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(bookId, mTitle, mSubtitle, mAuthors, mDescription, mBuyLink, mThumbnailURL);
+    override fun hashCode(): Int {
+        return Objects.hash(
+            bookId,
+            mTitle,
+            mSubtitle,
+            mAuthors,
+            mDescription,
+            mBuyLink,
+            mThumbnailURL
+        )
     }
 }

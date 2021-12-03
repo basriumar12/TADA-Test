@@ -1,23 +1,14 @@
-package com.bas.google_book_app.ui.detail;
+package com.bas.google_book_app.ui.detail
 
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider.NewInstanceFactory
+import com.bas.google_book_app.repository.BookRepository
 
-import com.bas.google_book_app.repository.BookRepository;
-
-public class DetailViewModelFactory extends ViewModelProvider.NewInstanceFactory {
-
-    private final BookRepository mRepository;
-    private final String mBookId;
-
-    public DetailViewModelFactory(BookRepository repository, String bookId) {
-        mRepository = repository;
-        mBookId = bookId;
-    }
-
-    @Override
-    public <T extends ViewModel> T create(Class<T> modelClass) {
-        //noinspection unchecked
-        return (T) new DetailViewModel(mRepository, mBookId);
+class DetailViewModelFactory(
+    private val mRepository: BookRepository?,
+    private val mBookId: String?
+) : NewInstanceFactory() {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return DetailViewModel(mRepository, mBookId) as T
     }
 }

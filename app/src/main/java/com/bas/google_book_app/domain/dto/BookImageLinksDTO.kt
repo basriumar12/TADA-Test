@@ -1,28 +1,22 @@
-package com.bas.google_book_app.domain.dto;
+package com.bas.google_book_app.domain.dto
 
-import com.google.gson.annotations.SerializedName;
+import com.bas.google_book_app.utilsdata.Constants
+import com.google.gson.annotations.SerializedName
 
-import static com.bas.google_book_app.utilsdata.Constants.NO_THUMBNAIL_URL;
-
-public class BookImageLinksDTO {
-
+class BookImageLinksDTO {
     @SerializedName("thumbnail")
-    private String mThumbnail;
+    private val mThumbnail: String? = null
 
     @SerializedName("small")
-    private String mThumbnailSmall;
+    private val mThumbnailSmall: String? = null
 
     @SerializedName("medium")
-    private String mThumbnailMedium;
+    private val mThumbnailMedium: String? = null
 
     @SerializedName("large")
-    private String mThumbnailLarge;
-
-    public String getThumbnail() {
-        if (mThumbnailLarge != null) return mThumbnailLarge;
-        if (mThumbnailMedium != null) return mThumbnailMedium;
-        if (mThumbnailSmall != null) return mThumbnailSmall;
-        if (mThumbnail != null) return mThumbnail;
-        return NO_THUMBNAIL_URL;
-    }
+    private val mThumbnailLarge: String? = null
+    val thumbnail: String
+        get() = (mThumbnailLarge
+            ?: (mThumbnailMedium
+                ?: (mThumbnailSmall ?: (mThumbnail ?: Constants.NO_THUMBNAIL_URL)))).toString()
 }

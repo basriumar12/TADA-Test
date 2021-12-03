@@ -1,64 +1,60 @@
-package com.bas.google_book_app.domain.dto;
+package com.bas.google_book_app.domain.dto
 
-import androidx.annotation.Nullable;
+import com.google.gson.annotations.SerializedName
 
-import com.google.gson.annotations.SerializedName;
 //
-public class BookVolumeInfoDTO {
+class BookVolumeInfoDTO {
     @SerializedName("title")
-    private String mTitle;
+    private var mTitle: String? = null
 
     @SerializedName("subtitle")
-    private String mSubtitle;
+    private var mSubtitle: String? = null
 
     @SerializedName("authors")
-    private String[] mAuthors;
+    private var mAuthors: Array<String?>? = null
 
     @SerializedName("description")
-    private String mDescription;
+    private var mDescription: String? = null
 
     @SerializedName("imageLinks")
-    @Nullable
-    private BookImageLinksDTO mImageLinks;
-
-    public String getTitle() {
-        return mTitle;
+    private var mImageLinks: BookImageLinksDTO? = null
+    fun getTitle(): String? {
+        return mTitle
     }
 
-    public void setTitle(String mTitle) {
-        this.mTitle = mTitle;
+    fun setTitle(mTitle: String?) {
+        this.mTitle = mTitle
     }
 
-    public String getSubtitle() {
-        return mSubtitle;
+    fun getSubtitle(): String? {
+        return mSubtitle
     }
 
-    public void setSubtitle(String mSubtitle) {
-        this.mSubtitle = mSubtitle;
+    fun setSubtitle(mSubtitle: String?) {
+        this.mSubtitle = mSubtitle
     }
 
-    public String[] getAuthors() {
-        return mAuthors;
+    fun getAuthors(): Array<String?>? {
+        return mAuthors
     }
 
-    public void setAuthors(String[] mAuthors) {
-        this.mAuthors = mAuthors;
+    fun setAuthors(mAuthors: Array<String?>?) {
+        this.mAuthors = mAuthors
     }
 
-    public String getDescription() {
-        return mDescription;
+    fun getDescription(): String? {
+        return mDescription
     }
 
-    public void setDescription(String description) {
-        this.mDescription = description;
+    fun setDescription(description: String?) {
+        mDescription = description
     }
 
-    @Nullable
-    public BookImageLinksDTO getImageLinks() {
-        return mImageLinks;
+    fun getImageLinks(): BookImageLinksDTO? {
+        return mImageLinks
     }
 
-    public void setImageLinks(BookImageLinksDTO imageLinks) {
-        this.mImageLinks = imageLinks;
+    fun setImageLinks(imageLinks: BookImageLinksDTO?) {
+        mImageLinks = imageLinks
     }
 }

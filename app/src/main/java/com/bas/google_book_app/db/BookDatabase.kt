@@ -1,31 +1,35 @@
-package com.bas.google_book_app.db;
+package com.bas.google_book_app.db
 
-import android.content.Context;
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.bas.google_book_app.db.BookDatabase
+import com.bas.google_book_app.utilsdata.Constants
+import com.bas.google_book_app.utilsdata.Constants.DATABASE_NAME
+import timber.log.Timber
 
-import androidx.room.Database;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import timber.log.Timber;
+@Database(entities = [BookEntry::class], version = 1, exportSchema = false)
+abstract class BookDatabase : RoomDatabase() {
+    companion object {
 
-import static com.bas.google_book_app.utilsdata.Constants.DATABASE_NAME;
-
-@Database(entities = {BookEntry.class}, version = 1, exportSchema = false)
-public abstract class BookDatabase extends RoomDatabase {
-    private static final Object LOCK = new Object();
-    private static BookDatabase sInstance;
-
-    public static BookDatabase getInstance(Context context) {
-        if (sInstance == null) {
-            synchronized (LOCK) {
-                Timber.d("Creating new Room DB instance");
-                sInstance = Room.databaseBuilder(context.getApplicationContext(),
-                        BookDatabase.class, DATABASE_NAME)
-                        .build();
+        private val LOCK = Any()
+        private var sInstance: BookDatabase? = null
+        fun getInstance(context: Context): BookDatabase? {
+            if (sInstance == null) {
+                synchronized(LOCK) {
+                    Timber.d("Creating new Room DB instance")
+                    sInstance = Room.databaseBuilder(
+                        context.applicationContext,
+                        BookDatabase::class.java, DATABASE_NAME.toString()
+                    )
+                        .build()
+                }
             }
+            Timber.d("Getting Room DB instance")
+            return sInstance
         }
-        Timber.d("Getting Room DB instance");
-        return sInstance;
     }
 
-    public abstract BookDao bookDao();
+    abstract fun bookDao(): BookDao?
 }

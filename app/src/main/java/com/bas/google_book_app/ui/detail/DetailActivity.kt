@@ -1,209 +1,200 @@
-package com.bas.google_book_app.ui.detail;
+package com.bas.google_book_app.ui.detail
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
+import android.content.Intent
+import android.graphics.Color
+import android.net.Uri
+import android.os.Bundle
+import android.view.*
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import com.bas.google_book_app.R
+import com.bas.google_book_app.databinding.ActivityDetailBinding
+import com.bas.google_book_app.db.BookDatabase
+import com.bas.google_book_app.db.BookEntry
+import com.bas.google_book_app.domain.Book
+import com.bas.google_book_app.ui.detail.DetailActivity
+import com.bas.google_book_app.utilsdata.Constants
+import com.bas.google_book_app.utilsdata.DependenciesUtils
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
+import com.google.android.material.snackbar.Snackbar
+import com.squareup.picasso.Picasso
+import timber.log.Timber
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProvider;
-
-import com.bas.google_book_app.R;
-import com.bas.google_book_app.db.BookDatabase;
-import com.bas.google_book_app.db.BookEntry;
-import com.bas.google_book_app.databinding.ActivityDetailBinding;
-import com.bas.google_book_app.domain.Book;
-import com.bas.google_book_app.utilsdata.DependenciesUtils;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.snackbar.Snackbar;
-import com.squareup.picasso.Picasso;
-
-import timber.log.Timber;
-
-import static com.bas.google_book_app.utilsdata.Constants.EXTRA_BOOK;
-
-public class DetailActivity extends AppCompatActivity {
-
-    private ActivityDetailBinding mDetailBinding;
-    private Book mBook;
-    private boolean mIsFavorite;
-    private DetailViewModel mDetailViewModel;
-    private BookDatabase mBookDB;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
-
-        mBookDB = BookDatabase.getInstance(this);
-        Intent intent = getIntent();
+class DetailActivity : AppCompatActivity() {
+    private var mDetailBinding: ActivityDetailBinding? = null
+    private var mBook: Book? = null
+    private var mIsFavorite = false
+    private var mDetailViewModel: DetailViewModel? = null
+    private var mBookDB: BookDatabase? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail)
+        mBookDB = BookDatabase.getInstance(this)
+        val intent = intent
         if (intent != null) {
-            if (intent.hasExtra(EXTRA_BOOK)) {
-                Bundle b = intent.getBundleExtra(EXTRA_BOOK);
+            if (intent.hasExtra(Constants.EXTRA_BOOK)) {
+                val b = intent.getBundleExtra(Constants.EXTRA_BOOK)
                 if (b != null) {
-                    mBook = b.getParcelable(EXTRA_BOOK);
+                    mBook = b.getParcelable(Constants.EXTRA_BOOK)
                 } else {
-                    Timber.e("Extra Bundle has no book!");
-
+                    Timber.e("Extra Bundle has no book!")
                 }
             }
         }
-
-        createViewModel();
-        observeBookEntry();
-        refreshUI();
+        createViewModel()
+        observeBookEntry()
+        refreshUI()
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (mBook.getBuyLink() != null) {
-            MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.detail, menu);
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (mBook?.mBuyLink != null) {
+            val inflater = menuInflater
+            inflater.inflate(R.menu.detail, menu)
         }
-        return true;
+        return true
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val itemId = item?.getItemId()
         if (itemId == R.id.action_buy) {
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(mBook.getBuyLink()));
-            startActivity(i);
-            return true;
+            val i = Intent(Intent.ACTION_VIEW)
+            i.data = Uri.parse(mBook?.mBuyLink)
+            startActivity(i)
+            return true
         }
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item)
     }
 
-    private void createViewModel() {
-        DetailViewModelFactory factory = DependenciesUtils.provideDetailViewModelFactory(
-                DetailActivity.this, mBook.getId());
-        mDetailViewModel = new ViewModelProvider(this, factory).get(DetailViewModel.class);
+    private fun createViewModel() {
+        val factory = DependenciesUtils.provideDetailViewModelFactory(
+            this@DetailActivity, mBook?.mId
+        )
+        mDetailViewModel = factory?.let {
+            ViewModelProvider(this,
+                it
+            ).get(DetailViewModel::class.java)
+        }
     }
 
-    private void observeBookEntry() {
-        mDetailViewModel.getBookEntry().observe(this, bookEntry -> {
-            if (mDetailViewModel.getBookEntry().getValue() == null) {
-                mDetailBinding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24);
-                mIsFavorite = false;
+    private fun observeBookEntry() {
+        mDetailViewModel?.getBookEntry()?.observe(this, { bookEntry: BookEntry? ->
+            mIsFavorite = if (mDetailViewModel?.getBookEntry()?.value == null) {
+                mDetailBinding?.fabFavorite?.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+                false
             } else {
-                mDetailBinding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_24);
-                mIsFavorite = true;
+                mDetailBinding?.fabFavorite?.setImageResource(R.drawable.ic_baseline_favorite_24)
+                true
             }
-        });
+        })
     }
 
-    public void onFavoriteClick(View view) {
-
-        BookEntry bookEntry = convertToBookEntry(mBook);
+    fun onFavoriteClick(view: View?) {
+        val bookEntry = convertToBookEntry(mBook)
         if (!mIsFavorite) {
-            mDetailViewModel.addFavoriteBook(bookEntry);
-            showSnackbarMessage(R.string.snackbar_added);
+            mDetailViewModel?.addFavoriteBook(bookEntry)
+            showSnackbarMessage(R.string.snackbar_added)
         } else {
-            BookEntry bookEntry2 = mDetailViewModel.getBookEntry().getValue();
-            mDetailViewModel.removeFavoriteBook(bookEntry2);
-            showSnackbarMessage(R.string.snackbar_removed);
+            val bookEntry2 = mDetailViewModel?.getBookEntry()?.value
+            mDetailViewModel?.removeFavoriteBook(bookEntry2)
+            showSnackbarMessage(R.string.snackbar_removed)
         }
-        mDetailViewModel.getBookEntry().getValue();
+        mDetailViewModel?.getBookEntry()?.value
     }
 
-    private BookEntry convertToBookEntry(Book book) {
-        return new BookEntry(book.getId(), book.getTitle(), book.getSubtitle(), book.getAuthors(),
-                book.getDescription(), book.getBuyLink(), book.getThumbnailURL());
+    private fun convertToBookEntry(book: Book?): BookEntry? {
+        return BookEntry(
+            book?.mId, book?.mTitle, book?.mSubtitle, book?.mAuthors.toString(),
+            book?.mDescription, book?.mBuyLink, book?.mThumbnailURL
+        )
     }
 
-    private void refreshUI() {
-        showUpButton();
-        setCollapsingToolbarTitle();
-        loadBookImage();
-        setTextLabels();
+    private fun refreshUI() {
+        showUpButton()
+        setCollapsingToolbarTitle()
+        loadBookImage()
+        setTextLabels()
     }
 
-    private void showUpButton() {
-        setSupportActionBar(mDetailBinding.toolbar);
-        ActionBar actionBar = getSupportActionBar();
+    private fun showUpButton() {
+        setSupportActionBar(mDetailBinding?.toolbar)
+        val actionBar = supportActionBar
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setDisplayShowHomeEnabled(true)
         }
     }
 
-    private void setCollapsingToolbarTitle() {
-        mDetailBinding.appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = true;
-            int scrollRange = -1;
-
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+    private fun setCollapsingToolbarTitle() {
+        mDetailBinding?.appBarLayout?.addOnOffsetChangedListener(object : OnOffsetChangedListener {
+            var isShow = true
+            var scrollRange = -1
+            override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
                 if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
+                    scrollRange = appBarLayout?.getTotalScrollRange()!!
                 }
                 if (scrollRange + verticalOffset == 0) {
-                    mDetailBinding.collapsingToolbarLayout.setTitle(mBook.getTitle());
-                    isShow = true;
+                    mDetailBinding?.collapsingToolbarLayout?.title = mBook?.mTitle
+                    isShow = true
                 } else if (isShow) {
-                    mDetailBinding.collapsingToolbarLayout.setTitle(" ");
-                    isShow = false;
+                    mDetailBinding?.collapsingToolbarLayout?.title = " "
+                    isShow = false
                 }
             }
-        });
+        })
     }
 
-    private void loadBookImage() {
-        String thumbnail = mBook.getThumbnailURL();
-        thumbnail = thumbnail.replaceFirst("^(http://)?(www\\.)?", "https://");
-
+    private fun loadBookImage() {
+        var thumbnail = mBook?.mThumbnailURL
+        thumbnail = thumbnail?.replaceFirst("^(http://)?(www\\.)?".toRegex(), "https://")
         Picasso.with(this)
-                .load(thumbnail)
-                .error(R.drawable.ic_baseline_broken_image_24)
-                .into(mDetailBinding.ivThumbnail);
+            .load(thumbnail)
+            .error(R.drawable.ic_baseline_broken_image_24)
+            .into(mDetailBinding?.ivThumbnail)
     }
 
-    private void setTextLabels() {
-
-        setTitleLabels();
-        setSubtitleLabels();
-        setDescription();
-        setAuthorLabels();
+    private fun setTextLabels() {
+        setTitleLabels()
+        setSubtitleLabels()
+        setDescription()
+        setAuthorLabels()
     }
 
-    private void setAuthorLabels() {
-        String author = mBook.getAuthors();
-        mDetailBinding.tvAuthorText.setText(author);
+    private fun setAuthorLabels() {
+        val author = mBook?.mAuthors
+        mDetailBinding?.tvAuthorText?.text = author.toString()
     }
 
-    private void setDescription() {
-        String description = mBook.getDescription();
-        mDetailBinding.tvDescriptionText.setText(description);
+    private fun setDescription() {
+        val description = mBook?.mDescription
+        mDetailBinding?.tvDescriptionText?.text = description.toString()
     }
 
-    private void setTitleLabels() {
-        String title = mBook.getTitle();
-        mDetailBinding.tvDetailTitle.setText(title);
+    private fun setTitleLabels() {
+        val title = mBook?.mTitle
+        mDetailBinding?.tvDetailTitle?.text = title.toString()
     }
 
-    private void setSubtitleLabels() {
-        String subtitle = mBook.getSubtitle();
+    private fun setSubtitleLabels() {
+        val subtitle = mBook?.mSubtitle.toString()
         if (subtitle != null) {
-            mDetailBinding.tvDetailSubtitle.setText(subtitle);
+            mDetailBinding?.tvDetailSubtitle?.text = subtitle
         }
     }
 
-    private void showSnackbarMessage(int resourceMessageID) {
-        Snackbar snackbar = Snackbar.make(
-                mDetailBinding.coordinator, resourceMessageID, Snackbar.LENGTH_SHORT);
-        View sbView = snackbar.getView();
-        sbView.setBackgroundColor(Color.DKGRAY);
-        TextView textView = sbView.findViewById(com.google.android.material.R.id.snackbar_text);
-        textView.setTextColor(Color.WHITE);
-        snackbar.show();
+    private fun showSnackbarMessage(resourceMessageID: Int) {
+        val snackbar = mDetailBinding?.coordinator?.let {
+            Snackbar.make(
+                it, resourceMessageID, Snackbar.LENGTH_SHORT
+            )
+        }
+        val sbView = snackbar?.view
+        sbView?.setBackgroundColor(Color.DKGRAY)
+        val textView =
+            sbView?.findViewById<TextView?>(com.google.android.material.R.id.snackbar_text)
+        textView?.setTextColor(Color.WHITE)
+        snackbar?.show()
     }
-
 }

@@ -1,66 +1,54 @@
-package com.bas.google_book_app.ui.main;
+package com.bas.google_book_app.ui.main
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
-import androidx.paging.LivePagedListBuilder;
-import androidx.paging.PagedList;
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
+import com.bas.google_book_app.db.BookEntry
+import com.bas.google_book_app.domain.Book
+import com.bas.google_book_app.repository.BookDataSourceFactory
+import com.bas.google_book_app.repository.BookRepository
+import com.bas.google_book_app.utilsdata.AppThreadExecutors
+import com.bas.google_book_app.utilsdata.Constants
 
-import com.bas.google_book_app.db.BookEntry;
-import com.bas.google_book_app.domain.Book;
-import com.bas.google_book_app.repository.BookDataSourceFactory;
-import com.bas.google_book_app.repository.BookRepository;
-import com.bas.google_book_app.utilsdata.AppThreadExecutors;
-
-import java.util.List;
-
-import static com.bas.google_book_app.utilsdata.Constants.INITIAL_LOAD_SIZE_HINT;
-import static com.bas.google_book_app.utilsdata.Constants.PAGE_SIZE;
-import static com.bas.google_book_app.utilsdata.Constants.PREFETCH_DISTANCE;
-
-public class MainActivityViewModel extends ViewModel {
-
-    private final BookRepository mRepository;
-
-    private LiveData<PagedList<Book>> mBookPagedList;
-    private LiveData<List<BookEntry>> mFavoriteBooks;
-
-    private String mFilterListBy;
-
-    public MainActivityViewModel(String filterListBy, BookRepository repository) {
-        mFilterListBy = filterListBy;
-        mRepository = repository;
-        init(mFilterListBy);
+class MainActivityViewModel(
+    private val mFilterListBy: String?,
+    private val mRepository: BookRepository?
+) : ViewModel() {
+    private var mBookPagedList: LiveData<PagedList<Book?>?>? = null
+    private var mFavoriteBooks: LiveData<MutableList<BookEntry?>?>? = null
+    private fun init(mFilterListBy: String?) {
+        val bookDataFactory = BookDataSourceFactory()
+        val config = PagedList.Config.Builder()
+            .setEnablePlaceholders(false)
+            .setInitialLoadSizeHint(Constants.INITIAL_LOAD_SIZE_HINT)
+            .setPageSize(Constants.PAGE_SIZE)
+            .setPrefetchDistance(Constants.PREFETCH_DISTANCE)
+            .build()
+        mBookPagedList = AppThreadExecutors.Companion.getInstance()?.networkIO()?.let {
+            LivePagedListBuilder(bookDataFactory, config)
+                .setFetchExecutor(it)
+                .build()
+        }
     }
 
-    private void init(String mFilterListBy) {
-
-        BookDataSourceFactory bookDataFactory = new BookDataSourceFactory();
-
-        PagedList.Config config = (new PagedList.Config.Builder())
-                .setEnablePlaceholders(false)
-                .setInitialLoadSizeHint(INITIAL_LOAD_SIZE_HINT)
-                .setPageSize(PAGE_SIZE)
-                .setPrefetchDistance(PREFETCH_DISTANCE)
-                .build();
-
-        mBookPagedList = new LivePagedListBuilder<>(bookDataFactory, config)
-                .setFetchExecutor(AppThreadExecutors.getInstance().networkIO())
-                .build();
+    fun getBookPagedList(): LiveData<PagedList<Book?>?>? {
+        return mBookPagedList
     }
 
-    public LiveData<PagedList<Book>> getBookPagedList() {
-        return mBookPagedList;
+    fun setBookPagedList(filterBy: String?) {
+        init(mFilterListBy)
     }
 
-    public void setBookPagedList(String filterBy) {
-        init(mFilterListBy);
+    fun getFavoriteBooks(): LiveData<MutableList<BookEntry?>?>? {
+        return mFavoriteBooks
     }
 
-    public LiveData<List<BookEntry>> getFavoriteBooks() {
-        return mFavoriteBooks;
+    fun setFavoriteBooks() {
+        mFavoriteBooks = mRepository?.getFavoriteBooks()
     }
 
-    public void setFavoriteBooks() {
-        mFavoriteBooks = mRepository.getFavoriteBooks();
+    init {
+        init(mFilterListBy)
     }
 }
